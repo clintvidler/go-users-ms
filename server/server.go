@@ -14,10 +14,11 @@ import (
 
 type Server struct {
 	Router *mux.Router
+	Logger *Logger
 }
 
-func NewServer() (s Server) {
-	s = Server{}
+func NewServer(logger Logger) (s *Server) {
+	s = &Server{Logger: &logger}
 	return
 }
 
@@ -35,7 +36,7 @@ func (s *Server) Serve(addr string) {
 	s.Router = r
 
 	srv := &http.Server{
-		Handler:      s.Router,
+		Handler:      LogRequests(s.Router, *s.Logger),
 		Addr:         addr,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -65,4 +66,13 @@ func (s *Server) Serve(addr string) {
 	// gracefully shutdown the server, waiting a time for current operations to complete
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	srv.Shutdown(ctx)
+}
+
+// log http requests
+func LogRequests(next http.Handler, logger Logger) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger.Info(r.Method, r.RequestURI)
+
+		next.ServeHTTP(w, r)
+	})
 }

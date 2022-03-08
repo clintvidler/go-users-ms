@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
-	s := server.NewServer()
+	logger := *server.NewLogger()
+
+	s := *server.NewServer(logger)
 
 	s.Serve(os.Getenv("ADDR"))
 }

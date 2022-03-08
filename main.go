@@ -3,11 +3,12 @@ package main
 import (
 	"os"
 
+	"users-ms/middlewares"
 	"users-ms/server"
 )
 
 func main() {
-	logger := *server.NewLogger()
+	logger := *middlewares.NewLogger()
 
 	s := *server.NewServer(logger)
 

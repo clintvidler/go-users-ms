@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -23,17 +22,7 @@ func NewServer(logger Logger) (s *Server) {
 }
 
 func (s *Server) Serve(addr string) {
-	r := mux.NewRouter().StrictSlash(true)
-
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "The homepage works!")
-	})
-
-	r.HandleFunc("/another-page", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Another page works!")
-	})
-
-	s.Router = r
+	s.setupRoutes()
 
 	srv := &http.Server{
 		Handler:      LogRequests(s.Router, *s.Logger),

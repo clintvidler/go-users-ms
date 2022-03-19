@@ -7,8 +7,35 @@ services:
       - 9090:9090
     environment:
       ADDR: :9090
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_NAME: datastore
+      DB_PROD: db-prod
+      DB_TEST: db-test
     volumes:
       - .:/app
+    networks:
+      - go-users-ms
+    depends_on:
+      - db-prod
+
+  db-prod:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: datastore
+    volumes:
+      - .dbdata:/var/lib/postgresql/datastore
+    networks:
+      - go-users-ms
+
+  db-test:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: datastore
     networks:
       - go-users-ms
 

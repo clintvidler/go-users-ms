@@ -7,18 +7,20 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	"users-ms/data"
 	"users-ms/middlewares"
 
 	"github.com/gorilla/mux"
 )
 
 type Server struct {
-	Router *mux.Router
-	Logger *middlewares.Logger
+	router    *mux.Router
+	datastore *data.Store
+	logger    *middlewares.Logger
 }
 
-func NewServer(logger middlewares.Logger) (s *Server) {
-	s = &Server{Logger: &logger}
+func NewServer(ds *data.Store, logger *middlewares.Logger) (s *Server) {
+	s = &Server{datastore: ds, logger: logger}
 	return
 }
 
@@ -26,7 +28,7 @@ func (s *Server) Serve(addr string) {
 	s.setupRoutes()
 
 	srv := &http.Server{
-		Handler:      middlewares.LogRequestResponse(s.Router, *s.Logger),
+		Handler:      middlewares.LogRequestResponse(s.router, *s.logger),
 		Addr:         addr,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

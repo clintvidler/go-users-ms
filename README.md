@@ -12,6 +12,8 @@ Stop the application:
 
 `docker compose stop`
 
-Listen to container logs:
+Listen to container logs: `make logs`
 
-`docker-compose logs -f main`
+Run tests:
+
+`make test`

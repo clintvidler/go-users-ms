@@ -10,6 +10,7 @@ import (
 	"users-ms/data"
 	"users-ms/middlewares"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -27,8 +28,19 @@ func NewServer(ds *data.Store, logger *middlewares.Logger) (s *Server) {
 func (s *Server) Serve(addr string) {
 	s.setupRoutes()
 
+	methods := []string{"GET", "POST", "PUT", "DELETE"}
+	headers := []string{"Content-Type"}
+	origins := []string{"http://localhost:9090"} // TODO: review allowed origins 	// origins := []string{"*"}
+
+	cors := handlers.CORS(
+		handlers.AllowedMethods(methods),
+		handlers.AllowedHeaders(headers),
+		handlers.AllowedOrigins(origins),
+		handlers.AllowCredentials(),
+	)
+
 	srv := &http.Server{
-		Handler:      middlewares.LogRequestResponse(s.router, *s.logger),
+		Handler:      cors(middlewares.LogRequestResponse(s.router, *s.logger)),
 		Addr:         addr,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,

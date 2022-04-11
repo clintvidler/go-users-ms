@@ -26,13 +26,13 @@ func (s *Server) setupRoutes() {
 
 	ar.Use(th.IsAuthenticated)
 
-	ar.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {}).Methods(http.MethodGet)
-
 	ar.HandleFunc("/logout", uh.Logout).Methods(http.MethodPost)
 
-	ar.HandleFunc("/update-info", func(w http.ResponseWriter, r *http.Request) {}).Methods(http.MethodPost)
+	ar.HandleFunc("/", uh.CurrentUser).Methods(http.MethodGet)
 
-	ar.HandleFunc("/update-password", func(w http.ResponseWriter, r *http.Request) {}).Methods(http.MethodPost)
+	ar.HandleFunc("/update-info", uh.UpdateInfo).Methods(http.MethodPost)
+
+	ar.HandleFunc("/update-password", uh.UpdatePassword).Methods(http.MethodPost)
 
 	s.router = r
 }

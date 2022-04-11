@@ -11,9 +11,11 @@ import (
 
 func main() {
 	store, err := data.NewStore(os.Getenv("DB_PROD"), os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+
 	if err != nil {
 		log.Panic(err)
 	}
+
 	store.Populate()
 
 	logger := middlewares.NewLogger()

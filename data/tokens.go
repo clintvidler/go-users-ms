@@ -2,7 +2,6 @@ package data
 
 import (
 	"errors"
-	"log"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -26,8 +25,6 @@ func (s *Store) ReadOneToken(email, token string) (t Token, err error) {
 	s.db.Where("user_email = ? and token = ? and expired_at >= now()", email, token).Last(&t)
 
 	err = t.Validate()
-
-	log.Println(err)
 
 	return
 }

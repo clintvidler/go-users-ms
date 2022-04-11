@@ -3,8 +3,7 @@ services:
   main:
     build: .
     command: ["air"]
-    ports:
-      - 9090:9090
+    container_name: users-ms
     environment:
       ADDR: :9090
       DB_USERNAME: root
@@ -15,7 +14,7 @@ services:
     volumes:
       - .:/app
     networks:
-      - go-users-ms
+      - users
     depends_on:
       - db-prod
 
@@ -28,7 +27,7 @@ services:
     volumes:
       - .dbdata:/var/lib/postgresql/datastore
     networks:
-      - go-users-ms
+      - users
 
   db-test:
     image: postgres:latest
@@ -37,7 +36,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: datastore
     networks:
-      - go-users-ms
+      - users
 
 networks:
-  go-users-ms:
+  users:
+    name: users_net

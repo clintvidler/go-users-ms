@@ -9,10 +9,12 @@ import (
 )
 
 type User struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email" gorm:"unique" validate:"required,email"`
-	Password  []byte `json:"-" validate:"required"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	Email        string `json:"email" gorm:"primaryKey;<-:create" validate:"required,email"`
+	Password     []byte `json:"-" validate:"required"`
+	FailedLogins int
+	BlockedUntil time.Time
 }
 
 func (u *User) Validate() error {
@@ -30,8 +32,9 @@ func (u *User) SetPassword(password string) (err error) {
 	return
 }
 
-func (u *User) ComparePassword(password string) error {
-	return bcrypt.CompareHashAndPassword(u.Password, []byte(password))
+func (u *User) ComparePassword(password string) (err error) {
+	err = bcrypt.CompareHashAndPassword(u.Password, []byte(password))
+	return
 }
 
 func (s *Store) CreateOneUser(u *User) (err error) {
@@ -43,6 +46,14 @@ func (s *Store) ReadOneUser(email string) (u User, err error) {
 	s.db.Where("email = ?", email).First(&u)
 
 	err = u.Validate()
+	return
+}
+
+func (s *Store) UpdateOneUser(u User) (err error) {
+	err = u.Validate()
+
+	s.db.Save(&u)
+
 	return
 }
 
